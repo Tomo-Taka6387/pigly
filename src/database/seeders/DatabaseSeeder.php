@@ -3,6 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Carbon;
+use App\Models\User;
+use App\Models\WeightLog;
+use App\Models\WeightTarget;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +19,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $user = User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'テストユーザー',
+                'password' => Hash::make('password'),
+            ]
+        );
+        for ($i = 0; $i < 35; $i++) {
+            WeightLog::factory()->create([
+                'user_id' => $user->id,
+                'date' => Carbon::today()->subDays(34 - $i),
+            ]);
+        }
+
+        WeightTarget::factory()->create([
+            'user_id' => $user->id,
+        ]);
     }
 }
